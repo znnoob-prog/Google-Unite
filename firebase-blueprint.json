@@ -1,0 +1,118 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Per-user Firebase sync metadata and workspace UI preferences stored privately per authenticated user.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Firebase Auth UID of the profile owner.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Verified email address of the user.",
+          "minLength": 3,
+          "maxLength": 254
+        },
+        "displayName": {
+          "type": "string",
+          "description": "Display name shown in workspace sync status.",
+          "minLength": 0,
+          "maxLength": 120
+        },
+        "theme": {
+          "type": "string",
+          "enum": ["light", "dark"],
+          "description": "Preferred UI color theme."
+        },
+        "lastSyncedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO timestamp of the most recent Google Workspace synchronization.",
+          "maxLength": 64
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the profile document was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the profile document was last updated."
+        }
+      },
+      "required": ["uid", "email", "displayName", "theme", "createdAt", "updatedAt"]
+    },
+    "PickerBookmark": {
+      "title": "PickerBookmark",
+      "description": "A Google Drive file selected via Google Picker and bookmarked in Firestore for real-time cross-device access.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the bookmark owner.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "fileId": {
+          "type": "string",
+          "description": "Google Drive file ID returned by Google Picker.",
+          "minLength": 1,
+          "maxLength": 200,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "name": {
+          "type": "string",
+          "description": "File display name.",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "mimeType": {
+          "type": "string",
+          "description": "Google Drive MIME type.",
+          "minLength": 0,
+          "maxLength": 160
+        },
+        "webViewLink": {
+          "type": "string",
+          "format": "uri",
+          "description": "HTTPS link to open the file in Google Drive.",
+          "minLength": 0,
+          "maxLength": 1000
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server update timestamp."
+        }
+      },
+      "required": ["ownerId", "fileId", "name", "mimeType", "webViewLink", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/userProfiles/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Private user sync profile and UI preferences isolated strictly to the owning UID."
+    },
+    "/pickerBookmarks/{bookmarkId}": {
+      "schema": {
+        "$ref": "#/entities/PickerBookmark"
+      },
+      "description": "User-owned Google Picker file bookmarks synchronized across sessions via Firestore."
+    }
+  }
+}
